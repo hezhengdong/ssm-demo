@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 必须对应 Mapper 接口的全路径 -->
+<mapper namespace="org.example.mapper.StudentMapper">
+
+    <!-- 1. 动态更新 -->
+    <update id="updateStudent" parameterType="org.example.entity.Student">
+        UPDATE students
+        <!-- <set> 标签会自动处理最末尾多余的逗号 -->
+        <set>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="gender != null and gender != ''">gender = #{gender},</if>
+            <if test="number != null and number != ''">number = #{number},</if>
+            <if test="address != null and address != ''">address = #{address},</if>
+            <if test="status != null">status = #{status},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 2. 组合查询（姓名+住址） -->
+    <select id="getStudentsByCondition" resultType="org.example.entity.Student">
+        SELECT * FROM students
+        <!-- <where> 标签会自动处理第一个多余的 AND 或 OR -->
+        <where>
+            <!-- 假设 status 为 1 代表正常用户，默认查正常的（可选） -->
+            <!-- AND status = 1 -->
+
+            <if test="name != null and name != ''">
+                AND name LIKE concat('%', #{name}, '%')
+            </if>
+            <if test="address != null and address != ''">
+                AND address LIKE concat('%', #{address}, '%')
+            </if>
+        </where>
+    </select>
+
+</mapper>

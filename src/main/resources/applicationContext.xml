@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 扫描注解（替换为你的包路径，含名字首字母） -->
+    <context:component-scan base-package="org.example"/>
+
+    <!-- 1. 配置数据源：数据库连接的“工厂” -->
+    <bean id="dataSource" class="org.apache.ibatis.datasource.pooled.PooledDataSource">
+        <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/ssmlab_tyut?useSSL=false"/>
+        <property name="username" value="root"/>
+        <property name="password" value="1234"/>
+    </bean>
+
+    <!-- 2. 配置SqlSessionFactory：MyBatis的“总入口” -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/> <!-- 注入数据源 -->
+        <!--<property name="typeAliasesPackage" value="com.tyut.你的名字首字母.pojo"/> &lt;!&ndash; POJO别名扫描 &ndash;&gt;-->
+    </bean>
+
+    <!-- 3. 扫描Mapper接口：自动生成实现类 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="org.example.mapper"/> <!-- Mapper包路径 -->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/> <!-- 关联SqlSessionFactory -->
+    </bean>
+
+</beans>
